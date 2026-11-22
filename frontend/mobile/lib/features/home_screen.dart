@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../core/money.dart';
 import '../core/theme.dart';
-import '../data/models.dart';
 import '../data/providers.dart';
 import 'widgets.dart';
 
