@@ -56,21 +56,21 @@ class HomeScreen extends ConsumerWidget {
         Row(children: [
           Expanded(child: FilledButton.icon(
             style: FilledButton.styleFrom(backgroundColor: kIncome),
-            onPressed: () => showTxnSheet(context, ref, type: 'income'), icon: const Icon(Icons.add), label: const Text('Add Income'))),
+            onPressed: () => showTxnSheet(context, ref, type: 'income'), icon: const Icon(Icons.add), label: const FittedBox(child: Text('Add Income', maxLines: 1)))),
           const SizedBox(width: 12),
           Expanded(child: FilledButton.icon(
             style: FilledButton.styleFrom(backgroundColor: kExpense),
-            onPressed: () => showTxnSheet(context, ref, type: 'expense'), icon: const Icon(Icons.remove), label: const Text('Add Expense'))),
+            onPressed: () => showTxnSheet(context, ref, type: 'expense'), icon: const Icon(Icons.remove), label: const FittedBox(child: Text('Add Expense', maxLines: 1)))),
         ]),
         const SizedBox(height: 12),
         Row(children: [
           Expanded(child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-            onPressed: () => context.go('/routine'), icon: const Icon(Icons.alarm), label: const Text('My Routine'))),
+            onPressed: () => context.go('/routine'), icon: const Icon(Icons.alarm), label: const FittedBox(child: Text('My Routine', maxLines: 1)))),
           const SizedBox(width: 12),
           Expanded(child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-            onPressed: () => context.go('/reports'), icon: const Icon(Icons.bar_chart), label: const Text('Monthly Reports'))),
+            onPressed: () => context.go('/reports'), icon: const Icon(Icons.bar_chart), label: const FittedBox(child: Text('Monthly Reports', maxLines: 1)))),
         ]),
         const SizedBox(height: 24),
         Text("Today's Tasks", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),

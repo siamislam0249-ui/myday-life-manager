@@ -53,9 +53,8 @@ class DataController extends StateNotifier<AppData> {
 
   Future<void> _init() async {
     _store = await openStore(userId!);
-    await reminders.init();
     await _reload();
-    await reminders.rescheduleAll(state.routines);
+    await _safeReschedule();
     _conn = Connectivity().onConnectivityChanged.listen((r) {
       if (r.any((x) => x != ConnectivityResult.none)) sync();
     });
@@ -70,6 +69,16 @@ class DataController extends StateNotifier<AppData> {
     _timer?.cancel();
     _store?.close();
     super.dispose();
+  }
+
+  /// Notifications are optional: a failure here must never break data sync.
+  Future<void> _safeReschedule() async {
+    try {
+      await reminders.init();
+      await reminders.rescheduleAll(state.routines);
+    } catch (e) {
+      debugPrint('reminder scheduling failed: $e');
+    }
   }
 
   Future<void> _reload() async {
@@ -137,7 +146,7 @@ class DataController extends StateNotifier<AppData> {
 
   Future<void> _afterWrite({bool routinesChanged = false}) async {
     await _reload();
-    if (routinesChanged) await reminders.rescheduleAll(state.routines);
+    if (routinesChanged) await _safeReschedule();
     unawaited(sync());
   }
 
@@ -156,14 +165,15 @@ class DataController extends StateNotifier<AppData> {
       await _push();
       await _pull();
       await _reload();
-      await reminders.rescheduleAll(state.routines);
+      await _safeReschedule();
     } on DioException catch (e) {
       // Offline is normal for an offline-first app: keep data dirty and retry later.
       final offline = e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout;
       error = offline ? null : 'Sync failed: ${e.response?.statusCode ?? e.message}';
     } catch (e) {
-      error = 'Sync failed: $e';
+      final msg = '$e';
+      error = 'Sync failed: ${msg.length > 120 ? '${msg.substring(0, 120)}…' : msg}';
     } finally {
       _syncing = false;
       if (!_disposed) {

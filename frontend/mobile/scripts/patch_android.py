@@ -33,4 +33,8 @@ if 'coreLibraryDesugaringEnabled' not in g:
     g = re.sub(r'minSdkVersion\s+flutter\.minSdkVersion', 'minSdkVersion 23', g)
     g += "\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'\n}\n"
     gradle.write_text(g)
+g = gradle.read_text()
+if 'minifyEnabled false' not in g:
+    g = re.sub(r'(buildTypes\s*\{\s*release\s*\{)', r'\1\n            minifyEnabled false\n            shrinkResources false', g, count=1)
+    gradle.write_text(g)
 print('android project patched')
